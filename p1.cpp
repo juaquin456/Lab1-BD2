@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-
+#include <cstring>
 struct Alumno {
     char codigo[5];
     char nombre[11];
@@ -52,18 +52,23 @@ public:
         outfile.close();
     }
     Alumno readRecord(int pos){
-        return {};
+        std::ifstream infile;
+        infile.open(this->filename);
+        Alumno tmp;
+        infile.seekg(pos*sizeof(tmp));
+        infile.read((char *) &tmp, sizeof(tmp));
+        infile.close();
+        return tmp;
     }
 };
 
 int main(){
     FixedRecord fr("datos1.txt");
     Alumno a;
-    a.codigo[0]='1';a.codigo[1]='2';
-    a.nombre[0]='a';
-    a.apellidos[0]='b';
-    a.apellidos[1]='n';
-    a.carrera[0]='c';
+    std::strcpy(a.codigo, "01117878787");
+    std::strcpy(a.nombre, "juaquin");
+    std::strcpy(a.apellidos, "Remon00");
+    std::strcpy(a.carrera, "CS");
     fr.add(a);
     auto t = fr.load();
     std::cout << t.size() << std::endl;
@@ -73,5 +78,12 @@ int main(){
         std::cout << e.apellidos << " ";
         std::cout << e.carrera << std::endl;
     }
+    std::cout << "---------------------" << std::endl;
+    Alumno b = fr.readRecord(9);
+
+    std::cout << b.codigo << " ";
+    std::cout << b.nombre << " ";
+    std::cout << b.apellidos << " ";
+    std::cout << b.carrera << std::endl;
     return 0;
 }
