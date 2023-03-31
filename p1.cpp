@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+
 struct Alumno {
     char codigo[5];
     char nombre[11];
@@ -15,7 +16,6 @@ std::istream & operator>>(std::istream & stream, Alumno& record){
     stream.read(record.nombre, 11);
     stream.read(record.apellidos, 20);
     stream.read(record.carrera, 15);
-    stream.get();
     return stream;
 }
 
@@ -24,7 +24,8 @@ std::ostream & operator<<(std::ostream & stream, Alumno & record){
     stream.write(record.nombre, 11);
     stream.write(record.apellidos, 20);
     stream.write(record.carrera, 15);
-    stream << "\n";
+    stream << "\r\n";
+    stream << std::flush;
     return stream;
 }
 
@@ -39,6 +40,7 @@ public:
         if (infile.is_open()) {
             Alumno tmp;
             while (infile.read((char *) &tmp, sizeof(tmp))) {
+                infile.ignore(2);
                 result.push_back(tmp);
             }
             infile.close();
@@ -47,6 +49,7 @@ public:
     }
     void add(const Alumno& record){
         std::ofstream  outfile;
+        //refill(record);
         outfile.open(this->filename, std::ios::app);
         outfile.write((char*)&record, sizeof(record));
         outfile.close();
@@ -55,7 +58,7 @@ public:
         std::ifstream infile;
         infile.open(this->filename);
         Alumno tmp;
-        infile.seekg(pos*sizeof(tmp));
+        infile.seekg(pos*sizeof(tmp)+2*pos);
         infile.read((char *) &tmp, sizeof(tmp));
         infile.close();
         return tmp;
@@ -65,25 +68,24 @@ public:
 int main(){
     FixedRecord fr("datos1.txt");
     Alumno a;
-    std::strcpy(a.codigo, "01117878787");
-    std::strcpy(a.nombre, "juaquin");
-    std::strcpy(a.apellidos, "Remon00");
-    std::strcpy(a.carrera, "CS");
-    fr.add(a);
+    std::strcpy(a.codigo, "0111 ");
+    std::strcpy(a.nombre, "juaquin    ");
+    std::strcpy(a.apellidos, "Remon00                         ");
+      std::strcpy(a.carrera, "Computacion          ");
+    //fr.add(a);
     auto t = fr.load();
     std::cout << t.size() << std::endl;
     for (auto & e: t){
-        std::cout << e.codigo << " ";
-        std::cout << e.nombre << " ";
-        std::cout << e.apellidos << " ";
-        std::cout << e.carrera << std::endl;
+        /*for (int i =0; i<15; i++){
+            std::cout << e.carrera[i];
+        }
+        std::cout << std::endl;
+        */
+        std::cout << e;
     }
     std::cout << "---------------------" << std::endl;
-    Alumno b = fr.readRecord(9);
+    Alumno b = fr.readRecord(5);
 
-    std::cout << b.codigo << " ";
-    std::cout << b.nombre << " ";
-    std::cout << b.apellidos << " ";
-    std::cout << b.carrera << std::endl;
+    std::cout << b<< std::endl;
     return 0;
 }
