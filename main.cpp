@@ -1,6 +1,7 @@
 #include <iostream>
-
+#include "p2.h"
+using namespace std;
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    test2();
     return 0;
 }
