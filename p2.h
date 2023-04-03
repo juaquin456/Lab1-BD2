@@ -4,8 +4,6 @@
 #include <iostream>
 #include <cstring>
 
-using namespace std;
-
 struct Alumno{
     char codigo [5];
     char nombre [11];
@@ -21,6 +19,9 @@ std::istream & operator>>(std::istream & stream, Alumno& record){
     stream.read(record.nombre, 11);
     stream.read(record.apellidos, 20);
     stream.read(record.carrera, 15);
+    stream.read(reinterpret_cast<char *>(&record.ciclo), sizeof(record.ciclo));
+    stream.read(reinterpret_cast<char *>(&record.mensualidad), sizeof(record.mensualidad));
+
     stream.get();
     return stream;
 }
@@ -30,61 +31,69 @@ std::ostream & operator<<(std::ostream & stream, Alumno & record){
     stream.write(record.nombre, 11);
     stream.write(record.apellidos, 20);
     stream.write(record.carrera, 15);
-    stream << "\n";
-    stream<<flush;
+    stream.write(reinterpret_cast<char *>(&record.ciclo), sizeof(record.ciclo));
+    stream.write(reinterpret_cast<char *>(&record.mensualidad), sizeof(record.mensualidad));
+    stream << "\r\n";
+    stream<<std::flush;
     return stream;
 }
 
 class FixedRecord{
-    string filename;
+    std::string filename;
 public:
-    explicit FixedRecord(string filename){
-        this->filename = filename;
-    };
-
-    vector<Alumno> load() {
-        vector<Alumno> alumnos;
-
-        ifstream inFile;
-        inFile.open(this->filename, ios::in | ios::binary);
-        if (inFile.is_open()) {
-            Alumno record;
-            while(inFile.read((char*) &record, sizeof(record))){
-                alumnos.push_back(record);
+    FixedRecord(const std::string & filename): filename(filename){}
+    std::vector<Alumno> load() {
+        std::ifstream infile;
+        infile.open(this->filename, std::ios::in | std::ios::binary);
+        std::vector<Alumno> result;
+        if (infile.is_open()) {
+            Alumno tmp;
+            while(infile.read((char *) &tmp, sizeof(tmp))){
+                result.push_back(tmp);
             }
-            inFile.close();
+            infile.close();
         }
-        return alumnos;
+        return result;
     };
-
-    void add(Alumno record){
-        ofstream outFile;
-        outFile.open(this->filename, ios::app | ios::binary);
-        outFile.write((char*) &record, sizeof(record));
+    void add(const Alumno& record){
+        std::ofstream outfile;
+        outfile.open(this->filename, std::ios::app | std::ios::binary);
+        outfile.write((char*) &record, sizeof(record));
+        outfile.close();
     };
 
     Alumno readRecord(int pos){
-        ifstream inFile;
-        Alumno record;
-        inFile.open(this->filename, ios::binary);
-        inFile.seekg(pos * sizeof(record), ios::beg);
-        inFile.read((char *) &record, sizeof(record));
-        inFile.close();
-        return record;
+        std::ifstream infile;
+        infile.open(this->filename, std::ios::binary);
+        Alumno tmp;
+        infile.seekg(pos * sizeof(tmp), std::ios::beg);
+        infile.read((char *) &tmp, sizeof(tmp));
+        infile.close();
+        return tmp;
     };
 
     bool del(int pos){
-
+        return true;
     };
 };
 
+void assignString2CharArray(std::string temp, char buffer[], int size){
+    for(int i=0; i<size; i++)
+        buffer[i] = (i < temp.size())? temp[i] : ' ';
+    buffer[size-1] = '\0';
+}
+
 void test2(){
-    FixedRecord fr("datos3.txt");
-    Alumno a;
-    std::strcpy(a.codigo, "01117878787");
-    std::strcpy(a.nombre, "juaquin");
-    std::strcpy(a.apellidos, "Remon00");
-    std::strcpy(a.carrera, "CS");
+    FixedRecord fr("datos_alumnos.bin");
+    Alumno a = Alumno();
+    assignString2CharArray("0001", a.codigo, sizeof(a.codigo));
+    assignString2CharArray("juaquin3    ", a.nombre, sizeof(a.nombre));
+    assignString2CharArray("Remon00                         ", a.apellidos, sizeof(a.apellidos));
+    assignString2CharArray("Computacion          ", a.carrera, sizeof(a.carrera));
+
+    a.ciclo = 1;
+    a.mensualidad = 0.99;
+
     fr.add(a);
     auto t = fr.load();
     std::cout << t.size() << std::endl;
@@ -92,13 +101,17 @@ void test2(){
         std::cout << e.codigo << " ";
         std::cout << e.nombre << " ";
         std::cout << e.apellidos << " ";
-        std::cout << e.carrera << std::endl;
+        std::cout << e.carrera << " ";
+        std::cout << e.ciclo << " ";
+        std::cout << e.mensualidad << std::endl;
     }
     std::cout << "---------------------" << std::endl;
-    Alumno b = fr.readRecord(0);
+    Alumno b = fr.readRecord(10);
 
     std::cout << b.codigo << " ";
     std::cout << b.nombre << " ";
     std::cout << b.apellidos << " ";
-    std::cout << b.carrera << std::endl;
+    std::cout << b.carrera << " ";
+    std::cout << b.ciclo << " ";
+    std::cout << b.mensualidad << std::endl;
 }
