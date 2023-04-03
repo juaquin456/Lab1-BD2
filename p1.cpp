@@ -3,6 +3,9 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <iomanip>
+
+using namespace std;
 
 struct Alumno {
     char codigo[5];
@@ -36,10 +39,16 @@ public:
         std::ifstream infile;
         infile.open(this->filename);
         std::vector<Alumno> result;
+
+        #ifdef _WIN32
+                const int IGNORE_CHARS = 1;
+        #else
+                const int IGNORE_CHARS = 2;
+        #endif
         if (infile.is_open()) {
             Alumno tmp;
             while (infile.read((char *) &tmp, sizeof(tmp))) {
-                infile.ignore(2);
+                infile.ignore(IGNORE_CHARS);
                 result.push_back(tmp);
             }
             infile.close();
