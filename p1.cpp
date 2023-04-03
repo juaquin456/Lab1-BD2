@@ -71,7 +71,7 @@ void test1() {
     std::strcpy(a.nombre, "juaquin         ");
     std::strcpy(a.apellidos, "Remon04             ");
     std::strcpy(a.carrera, "Computacion    ");
-    fr.add(a);
+    //fr.add(a);
     auto t = fr.load();
     std::cout << t.size() << std::endl;
     for (auto &e: t) {
