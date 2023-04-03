@@ -3,6 +3,9 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <iomanip>
+
+using namespace std;
 
 struct Alumno {
     char codigo[5];
@@ -37,10 +40,16 @@ public:
         std::ifstream infile;
         infile.open(this->filename);
         std::vector<Alumno> result;
+
+        #ifdef _WIN32
+                const int IGNORE_CHARS = 1;
+        #else
+                const int IGNORE_CHARS = 2;
+        #endif
         if (infile.is_open()) {
             Alumno tmp;
             while (infile.read((char *) &tmp, sizeof(tmp))) {
-                infile.ignore(2);
+                infile.ignore(IGNORE_CHARS);
                 result.push_back(tmp);
             }
             infile.close();
@@ -87,5 +96,14 @@ int main(){
     Alumno b = fr.readRecord(5);
 
     std::cout << b<< std::endl;
+//
+//
+//    std::cout << "-----------------------" << endl;
+//    for(size_t i=0; i<t.size();i++){
+//        std::cout << t.at(i).codigo << setw(10)
+//             << t.at(i).nombre  << setw(10)
+//             << t.at(i).apellidos  << setw(10)
+//             << t.at(i).carrera << endl;
+//    }
     return 0;
 }
