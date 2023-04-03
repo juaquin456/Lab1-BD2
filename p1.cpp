@@ -24,7 +24,6 @@ std::ostream & operator<<(std::ostream & stream, Alumno & record){
     stream.write(record.nombre, 11);
     stream.write(record.apellidos, 20);
     stream.write(record.carrera, 15);
-    stream << "\r\n";
     stream << std::flush;
     return stream;
 }
@@ -49,9 +48,9 @@ public:
     }
     void add(const Alumno& record){
         std::ofstream  outfile;
-        //refill(record);
         outfile.open(this->filename, std::ios::app);
         outfile.write((char*)&record, sizeof(record));
+        outfile << "\r\n";
         outfile.close();
     }
     Alumno readRecord(int pos){
@@ -65,27 +64,25 @@ public:
     }
 };
 
-int main(){
+void test1() {
     FixedRecord fr("datos1.txt");
     Alumno a;
-    std::strcpy(a.codigo, "0111 ");
-    std::strcpy(a.nombre, "juaquin    ");
-    std::strcpy(a.apellidos, "Remon00                         ");
-      std::strcpy(a.carrera, "Computacion          ");
-    //fr.add(a);
+    std::strcpy(a.codigo, "0118 ");
+    std::strcpy(a.nombre, "juaquin         ");
+    std::strcpy(a.apellidos, "Remon04             ");
+    std::strcpy(a.carrera, "Computacion    ");
+    fr.add(a);
     auto t = fr.load();
     std::cout << t.size() << std::endl;
-    for (auto & e: t){
-        /*for (int i =0; i<15; i++){
-            std::cout << e.carrera[i];
-        }
-        std::cout << std::endl;
-        */
-        std::cout << e;
+    for (auto &e: t) {
+        std::cout << e << std::endl;
     }
     std::cout << "---------------------" << std::endl;
-    Alumno b = fr.readRecord(5);
+    std::cout << "Record 8: \n";
+    Alumno b = fr.readRecord(8);
+    std::cout << b << std::endl;
+}
 
-    std::cout << b<< std::endl;
-    return 0;
+int main(){
+    test1();
 }
