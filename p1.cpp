@@ -58,18 +58,24 @@ public:
     void add(const Alumno& record){
         std::ofstream  outfile;
         outfile.open(this->filename, std::ios::app);
-        outfile.write((char*)&record, sizeof(record));
-        outfile << "\r\n";
-        outfile.close();
+        if (outfile.is_open()) {
+            outfile.write((char *) &record, sizeof(record));
+            outfile << "\r\n";
+            outfile.close();
+        }
     }
     Alumno readRecord(int pos){
+        if (pos < 0) throw std::invalid_argument("La posicion enviada debe no debe ser negativa");
         std::ifstream infile;
         infile.open(this->filename);
-        Alumno tmp;
-        infile.seekg(pos*sizeof(tmp)+2*pos);
-        infile.read((char *) &tmp, sizeof(tmp));
-        infile.close();
-        return tmp;
+        if (infile.is_open()){
+            Alumno tmp;
+            infile.seekg(pos * sizeof(tmp) + 2 * pos);
+            infile.read((char *) &tmp, sizeof(tmp));
+            infile.close();
+            return tmp;
+        }
+        return {};
     }
 };
 

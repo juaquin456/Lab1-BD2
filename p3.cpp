@@ -86,7 +86,6 @@ public:
 
 void test1() {
     VariableRecord vr("datos2.txt");
-    vr.readRecord(-1);
     std::cout << vr.load().size() << std::endl;
     for (auto& e: vr.load()) {
         std::cout << e.Nombre << "\t" << e.Apellidos << "\t" << e.Carrera << "\t" << e.mensualidad << std::endl;
