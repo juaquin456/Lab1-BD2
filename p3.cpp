@@ -68,6 +68,7 @@ public:
     }
 
     Alumno readRecord(int pos) {
+        if (pos < 0) throw std::invalid_argument("La posicion enviada debe no debe ser negativa");
         std::ifstream infile;
         infile.open(this->filename);
         if (infile.is_open()) {
@@ -88,6 +89,7 @@ public:
 
 void test1() {
     VariableRecord vr("datos2.txt");
+    vr.readRecord(-1);
     std::cout << vr.load().size() << std::endl;
     for (auto& e: vr.load()) {
         std::cout << e.Nombre << "\t" << e.Apellidos << "\t" << e.Carrera << "\t" << e.mensualidad << std::endl;
