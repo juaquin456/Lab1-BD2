@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <iomanip>
 
 struct Alumno{
     char codigo [5];
@@ -116,7 +117,6 @@ public:
             file.write((char *) &eliminado, sizeof(eliminado));
             file.write((char *) &next_del, sizeof(next_del));
         }
-
     };
 
     Alumno readRecord(int pos){
@@ -189,24 +189,23 @@ void assignString2CharArray(std::string temp, char buffer[], int size){
 void test2(){
     FixedRecord fr("datos_alumnos.bin");
     Alumno a = Alumno();
-    assignString2CharArray("0010", a.codigo, sizeof(a.codigo));
-    assignString2CharArray("juaquin312   ", a.nombre, sizeof(a.nombre));
-    assignString2CharArray("Remon00                         ", a.apellidos, sizeof(a.apellidos));
-    assignString2CharArray("Computacion          ", a.carrera, sizeof(a.carrera));
-
-    a.ciclo = 1;
-    a.mensualidad = 0.99;
-
-    fr.add(a);
-
-    assignString2CharArray("0011", a.codigo, sizeof(a.codigo));
-    fr.add(a);
-
-    assignString2CharArray("0012", a.codigo, sizeof(a.codigo));
-    fr.add(a);
-
-    assignString2CharArray("0013", a.codigo, sizeof(a.codigo));
-    fr.add(a);
+//    assignString2CharArray("0010", a.codigo, sizeof(a.codigo));
+//    assignString2CharArray("juaquin312   ", a.nombre, sizeof(a.nombre));
+//    assignString2CharArray("Remon00                         ", a.apellidos, sizeof(a.apellidos));
+//    assignString2CharArray("Computacion          ", a.carrera, sizeof(a.carrera));
+//
+//    a.ciclo = 1;
+//    a.mensualidad = 0.99;
+//    fr.add(a);
+//
+//    assignString2CharArray("0011", a.codigo, sizeof(a.codigo));
+//    fr.add(a);
+//
+//    assignString2CharArray("0012", a.codigo, sizeof(a.codigo));
+//    fr.add(a);
+//
+//    assignString2CharArray("0013", a.codigo, sizeof(a.codigo));
+//    fr.add(a);
 
     auto t = fr.load();
     std::cout << t.size() << std::endl;
@@ -227,9 +226,9 @@ void test2(){
     std::cout << b.carrera << " ";
     std::cout << b.ciclo << " ";
     std::cout << b.mensualidad << std::endl;
-
+//
     std::cout << "---------------------" << std::endl;
-    /* fr.del(1);
+    fr.del(1);
     fr.del(2);
     fr.del(3);
     t = fr.load();
@@ -240,7 +239,79 @@ void test2(){
         std::cout << e.carrera << " ";
         std::cout << e.ciclo << " ";
         std::cout << e.mensualidad << std::endl;
-    } */
+    }
 
+}
 
+void test_P2(){
+    FixedRecord records("alumnos_test.dat");
+
+    Alumno record1 = {"0001", "Juan", "Perez", "Ingenieria", 2, 500.0f};
+    Alumno record2 = {"0002", "Maria", "Gonzalez", "Medicina", 4, 800.0f};
+    Alumno record3 = {"0003", "Carlos", "Rojas", "Derecho", 3, 700.0f};
+    Alumno record4 = {"0004", "Esteban", "Obregon", "Marketing", 8, 500.0f};
+    Alumno record5 = {"0005", "Pepe", "Milla", "Publicidad", 4, 500.0f};
+    Alumno record6 = {"0006", "Anna", "Slavyaninova", "Economia", 5, 700.0f};
+    Alumno record7 = {"0007", "Alyssa", "Klee", "Educacion", 2, 300.0f};
+    Alumno record8= {"0008", "Lila", "Doering", "Filosofia", 7, 300.0f};
+    Alumno record9 = {"0009", "Rodrigo", "Grande", "Gestion", 4, 400.0f};
+    Alumno record10 = {"0010", "Kevin", "Osorio", "Derecho", 2, 700.0f};
+    Alumno record11 = {"0011", "Newton", "Pinedo", "Ingenieria", 7, 500.0f};
+    Alumno record12 = {"0012", "Jorge", "Orellana", "Ingenieria", 9, 500.0f};
+
+    ////// TESTING ADD METHOD /////
+    records.add(record1);
+    records.add(record2);
+    records.add(record3);
+    records.add(record4);
+    records.add(record5);
+    records.add(record6);
+    records.add(record7);
+    records.add(record8);
+    records.add(record9);
+    records.add(record10);
+    records.add(record11);
+    records.add(record12);
+
+    ////// TESTING LOAD METHOD /////
+    std::vector<Alumno> loaded_records = records.load();
+
+    std::cout << "Registros cargados: " << std::endl;
+    for (Alumno record : loaded_records) {
+        std::cout << std::setw(5) << record.codigo
+                  << std::setw(10) << record.nombre
+                  << std::setw(20) << record.apellidos
+                  << std::setw(15) << record.carrera
+                  << std::setw(5) << record.ciclo
+                  << std::setw(8) << std::fixed << std::setprecision(2) << record.mensualidad << std::endl;
+    }
+
+    std::cout << std::endl;
+    ////// TESTING DEL METHOD /////
+    records.del(2);
+    records.del(6);
+    records.del(9);
+    loaded_records = records.load();
+
+    std::cout << "Registros despues de eliminar los registros 2, 6 y 9: " << std::endl;
+    for (Alumno record : loaded_records) {
+        std::cout << std::setw(5) << record.codigo
+                  << std::setw(10) << record.nombre
+                  << std::setw(20) << record.apellidos
+                  << std::setw(15) << record.carrera
+                  << std::setw(5) << record.ciclo
+                  << std::setw(8) << std::fixed << std::setprecision(2) << record.mensualidad << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    //// TESTING readRecord METHOD ////
+    std::cout << "Registro leido de la posicion 8: " << std::endl;
+    Alumno b = records.readRecord(8);
+    std::cout << std::setw(5) << b.codigo
+              << std::setw(10) << b.nombre
+              << std::setw(20) << b.apellidos
+              << std::setw(15) << b.carrera
+              << std::setw(5) << b.ciclo
+              << std::setw(8) << std::fixed << std::setprecision(2) << b.mensualidad << std::endl;
 }
