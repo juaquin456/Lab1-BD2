@@ -56,6 +56,12 @@ public:
         std::ofstream  outfile;
         outfile.open(this->filename, std::ios::app);
         if (outfile.is_open()) {
+            if (outfile.tellp() == 0){
+                outfile << "Nombre"<<this->field_delim
+                <<"Apellidos"<<this->field_delim
+                <<"Carrera"<<this->field_delim
+                <<"mensualidad"<<this->record_delim;
+            }
             outfile << record.Nombre << this->field_delim;
             outfile << record.Apellidos << this->field_delim;
             outfile << record.Carrera << this->field_delim;
@@ -85,12 +91,12 @@ public:
 };
 
 void test1() {
-    VariableRecord vr("datos2.txt");
+    VariableRecord vr("datos3.txt");
     std::cout << vr.load().size() << std::endl;
     for (auto& e: vr.load()) {
         std::cout << e.Nombre << "\t" << e.Apellidos << "\t" << e.Carrera << "\t" << e.mensualidad << std::endl;
     }
-    std::cout << typeid(vr.readRecord(1).mensualidad).name() << std::endl;
+    //std::cout << typeid(vr.readRecord(1).mensualidad).name() << std::endl;
     Alumno b;
     b.Nombre = "Juaquin";
     b.Apellidos = "Remon Flores";
@@ -100,7 +106,7 @@ void test1() {
     for (auto& e: vr.load()) {
         std::cout << e.Nombre << "\t" << e.Apellidos << "\t" << e.Carrera << "\t" << e.mensualidad << std::endl;
     }
-    std::cout << vr.readRecord(5).Nombre << std::endl;
+    std::cout << vr.readRecord(0).Nombre << std::endl;
 }
 
 int main() {
