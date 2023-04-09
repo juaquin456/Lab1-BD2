@@ -40,6 +40,22 @@ std::ostream & operator<<(std::ostream & stream, Alumno & record){
     return stream;
 }
 
+//////////////////// RESPUESTA A PREGUNTA DEL EJERCICIO P2 ///////////////////
+/* Realizar operaciones con File Handling en archivos binarios es más conveniente
+ * que hacerlo en archivos de texto porque los archivos binarios almacenan
+ * los datos en su forma nativa en la memoria, lo que significa que no se realiza
+ * ninguna conversión adicional antes de escribir o leer los datos.
+ * Por lo tanto, los archivos binarios son más rápidos y eficientes que los archivos de
+ * texto en la entrada y salida de grandes cantidades de datos.
+ *
+ * Además, los archivos binarios permiten un mayor control sobre la estructura y el formato de los datos almacenados.
+ * Los archivos de texto generalmente contienen solo texto plano, lo que limita su capacidad para almacenar estructuras
+ * de datos complejas. Por otro lado, los archivos binarios pueden contener cualquier tipo de datos, incluidos números
+ * enteros, números de punto flotante, caracteres, cadenas de caracteres y estructuras de datos personalizadas.
+ * */
+
+
+
 class FixedRecord{
     std::string filename;
 public:
